@@ -22,7 +22,8 @@ At line:1 char:1
 
 Use this command to allow running scripts on your system:
 Set-ExecutionPolicy RemoteSigned
--Type 'Y' for yes
+
+Type 'Y' for yes
 
 During execution, there will be verbose text telling the user what the current step is in the scraping process.
 
