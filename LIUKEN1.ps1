@@ -3,6 +3,8 @@
 #define field values here
 $global:saveLocation = "C:\FaceBook_Expedia_$(get-date -f yyyy-MM-dd-hh-ss-ms).txt"
 $global:numberOfPosts = 8
+$global:faceBookPageURL = "https://www.facebook.com/pg/expedia/posts/?ref=page_internal"
+
 $VerbosePreference = "continue"
 
 #this function gets a FaceBook page and its latest posts
@@ -12,12 +14,13 @@ function Get-WebSiteLatestPosts($numberOfPosts)
 {
     Write-Verbose "Pulling Latest FaceBook Posts"
 
-    $WebResponse = Invoke-WebRequest "https://www.facebook.com/pg/expedia/posts/?ref=page_internal" #reference for the website URL for Facebook posts
+    $WebResponse = Invoke-WebRequest $global:faceBookPageURL #reference for the website URL for Facebook posts
 
     $Data = $WebResponse.ParsedHTML
 
     $Results = @{} #use a hashtable so we can store key=timestamp and value=post content
 
+	Write-Verbose "Please wait while data is being extracted..."
     #We should look for divs with class values containing 'userContentWrapper' to get the latest posts
     $count = 1
     $Data.getElementsByTagName('div') | Where classname -match 'userContentWrapper' | % {
@@ -32,9 +35,7 @@ function Get-WebSiteLatestPosts($numberOfPosts)
     }
 
     #sort the results by key value
-    if($Results.Count > 0) {
-        $Results = $Results.GetEnumerator() | Sort-Object -Property key
-    }
+    $Results = $Results.GetEnumerator() | Sort-Object -Property key
 
     #instead of returning in the foreach loop above, we return here. There is an issue when returning inside the loop causing the results to double up
     return $Results
